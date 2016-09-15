@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Diagram>
+  <ID>JAVA</ID>
+  <OriginalElement>com.soagile.api.service.impl.RoleServiceImpl</OriginalElement>
+  <nodes>
+    <node x="294.5" y="0.0">com.soagile.api.common.interfaces.IOperations</node>
+    <node x="119.125" y="592.0">com.soagile.api.service.IRoleService</node>
+    <node x="0.0" y="245.0">com.soagile.api.common.interfaces.IByNameApi</node>
+    <node x="535.625" y="446.0">com.soagile.api.common.persistence.service.AbstractRawService</node>
+    <node x="149.125" y="468.0">com.soagile.api.common.persistence.service.IService</node>
+    <node x="190.0" y="245.0">com.soagile.api.common.persistence.service.IRawService</node>
+    <node x="243.875" y="694.0">com.soagile.api.service.impl.RoleServiceImpl</node>
+    <node x="306.875" y="571.0">com.soagile.api.common.persistence.service.AbstractService</node>
+    <node x="616.0" y="96.0">org.springframework.transaction.annotation.Transactional</node>
+  </nodes>
+  <notes />
+  <edges>
+    <edge source="com.soagile.api.service.impl.RoleServiceImpl" target="com.soagile.api.common.persistence.service.AbstractService">
+      <point x="51.5" y="-37.0" />
+      <point x="398.375" y="669.0" />
+      <point x="514.375" y="669.0" />
+      <point x="0.0" y="37.0" />
+    </edge>
+    <edge source="com.soagile.api.common.persistence.service.AbstractService" target="com.soagile.api.common.persistence.service.IService">
+      <point x="-102.25" y="-37.0" />
+      <point x="412.125" y="545.0" />
+      <point x="204.625" y="545.0" />
+      <point x="18.5" y="15.0" />
+    </edge>
+    <edge source="com.soagile.api.common.persistence.service.IService" target="com.soagile.api.common.persistence.service.IRawService">
+      <point x="18.5" y="-15.0" />
+      <point x="204.625" y="421.0" />
+      <point x="287.25" y="421.0" />
+      <point x="-97.25" y="26.0" />
+    </edge>
+    <edge source="com.soagile.api.service.IRoleService" target="com.soagile.api.common.persistence.service.IService">
+      <point x="0.0" y="-15.0" />
+      <point x="-18.5" y="15.0" />
+    </edge>
+    <edge source="com.soagile.api.service.impl.RoleServiceImpl" target="com.soagile.api.service.IRoleService">
+      <point x="-51.5" y="-37.0" />
+      <point x="295.375" y="669.0" />
+      <point x="167.625" y="669.0" />
+      <point x="0.0" y="15.0" />
+    </edge>
+    <edge source="com.soagile.api.common.persistence.service.AbstractRawService" target="org.springframework.transaction.annotation.Transactional">
+      <point x="40.5" y="-37.0" />
+      <point x="657.125" y="421.0" />
+      <point x="751.5" y="421.0" />
+      <point x="0.0" y="125.0" />
+    </edge>
+    <edge source="com.soagile.api.common.persistence.service.AbstractRawService" target="com.soagile.api.common.persistence.service.IRawService">
+      <point x="-40.5" y="-37.0" />
+      <point x="576.125" y="421.0" />
+      <point x="481.75" y="421.0" />
+      <point x="97.25" y="26.0" />
+    </edge>
+    <edge source="com.soagile.api.common.persistence.service.AbstractService" target="com.soagile.api.common.persistence.service.AbstractRawService">
+      <point x="102.25" y="-37.0" />
+      <point x="0.0" y="37.0" />
+    </edge>
+    <edge source="com.soagile.api.common.persistence.service.IService" target="com.soagile.api.common.interfaces.IByNameApi">
+      <point x="-18.5" y="-15.0" />
+      <point x="167.625" y="421.0" />
+      <point x="85.0" y="421.0" />
+      <point x="0.0" y="26.0" />
+    </edge>
+    <edge source="com.soagile.api.common.persistence.service.IRawService" target="com.soagile.api.common.interfaces.IOperations">
+      <point x="0.0" y="-26.0" />
+      <point x="0.0" y="48.0" />
+    </edge>
+  </edges>
+  <settings layout="Hierarchic Group" zoom="1.0" x="452.0" y="384.0" />
+  <SelectedNodes />
+  <Categories>
+    <Category>Methods</Category>
+  </Categories>
+  <SCOPE>All</SCOPE>
+  <VISIBILITY>public</VISIBILITY>
+</Diagram>
+

@@ -14,6 +14,11 @@ public final class Um {
     public static final String PASS = ADMIN_PASS;
     public static final String EMAIL = ADMIN_EMAIL;
 
+
+    public static final String USER_USERNAME = "user";
+    public static final String USER_PASS = "userpass";
+    public static final String USER_EMAIL = "user@fake.com";
+
     // privileges
 
     public static final class Privileges {
@@ -37,7 +42,7 @@ public final class Um {
         /** A placeholder role for administrator. */
         public static final String ROLE_ADMIN = "ROLE_ADMIN";
         /** A placeholder role for enduser. */
-        public static final String ROLE_ENDUSER = "ROLE_ENDUSER";
+        public static final String ROLE_USER = "ROLE_ENDUSER";
 
     }
 

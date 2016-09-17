@@ -40,6 +40,11 @@ public class Privilege implements INameableEntity, INameableDto {
         description = descriptionToSet;
     }
 
+    public Privilege(final String nameToSet) {
+        super();
+        name = nameToSet;
+    }
+
     // API
 
     @Override

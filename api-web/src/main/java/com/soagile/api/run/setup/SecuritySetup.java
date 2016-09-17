@@ -19,14 +19,13 @@ import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.stereotype.Component;
-import org.springframework.util.StringUtils;
 
 import java.util.Set;
 
 @Component
 @Profile(value = "deployed")
 public class SecuritySetup implements ApplicationListener<ContextRefreshedEvent> {
-    private final Logger logger = LoggerFactory.getLogger(SecuritySetup.class);
+    private final Logger LOGGER = LoggerFactory.getLogger(SecuritySetup.class);
 
     private boolean setupDone;
 
@@ -46,43 +45,41 @@ public class SecuritySetup implements ApplicationListener<ContextRefreshedEvent>
     //
 
     /**
-     * - note that this is a compromise - the flag makes this bean statefull
-     * which can (and will) be avoided in the future by a more advanced mechanism <br>
-     * - the reason for this is that the context is refreshed more than once
-     * throughout the lifecycle of the deployable <br>
+     * - note that this is a compromise - the flag makes this bean statefull which can (and will) be avoided in the future by a more advanced mechanism <br>
+     * - the reason for this is that the context is refreshed more than once throughout the lifecycle of the deployable <br>
      * - alternatives: proper persisted versioning
      */
     @Override
     public final void onApplicationEvent(final ContextRefreshedEvent event) {
         if (!setupDone) {
-            logger.info("Executing Setup");
+            LOGGER.info("Executing Setup");
 
             createPrivileges();
             createRoles();
             createPrincipals();
 
             setupDone = true;
-            logger.info("Setup Done");
+            LOGGER.info("Setup Done");
         }
     }
 
     // Privilege
 
     private void createPrivileges() {
-        createPrivilegeIfNotExisting(Um.Privileges.CAN_PRIVILEGE_READ);
-        createPrivilegeIfNotExisting(Um.Privileges.CAN_PRIVILEGE_WRITE);
+        createPrivilegeIfNotExisting(Privileges.CAN_PRIVILEGE_READ);
+        createPrivilegeIfNotExisting(Privileges.CAN_PRIVILEGE_WRITE);
 
         createPrivilegeIfNotExisting(Privileges.CAN_ROLE_READ);
         createPrivilegeIfNotExisting(Privileges.CAN_ROLE_WRITE);
 
         createPrivilegeIfNotExisting(Privileges.CAN_USER_READ);
-        createPrivilegeIfNotExisting(Um.Privileges.CAN_USER_WRITE);
+        createPrivilegeIfNotExisting(Privileges.CAN_USER_WRITE);
     }
 
     final void createPrivilegeIfNotExisting(final String name) {
         final Privilege entityByName = privilegeService.findByName(name);
         if (entityByName == null) {
-            final Privilege entity = new Privilege(name,StringUtils.capitalize(name));
+            final Privilege entity = new Privilege(name);
             privilegeService.create(entity);
         }
     }
@@ -104,7 +101,8 @@ public class SecuritySetup implements ApplicationListener<ContextRefreshedEvent>
         Preconditions.checkNotNull(canUserRead);
         Preconditions.checkNotNull(canUserWrite);
 
-        createRoleIfNotExisting(Um.Roles.ROLE_ADMIN, Sets.<Privilege> newHashSet(canUserRead, canUserWrite, canRoleRead, canRoleWrite, canPrivilegeRead, canPrivilegeWrite));
+        createRoleIfNotExisting(Roles.ROLE_USER, Sets.<Privilege> newHashSet(canUserRead, canRoleRead, canPrivilegeRead));
+        createRoleIfNotExisting(Roles.ROLE_ADMIN, Sets.<Privilege> newHashSet(canUserRead, canUserWrite, canRoleRead, canRoleWrite, canPrivilegeRead, canPrivilegeWrite));
     }
 
     final void createRoleIfNotExisting(final String name, final Set<Privilege> privileges) {
@@ -120,9 +118,10 @@ public class SecuritySetup implements ApplicationListener<ContextRefreshedEvent>
 
     final void createPrincipals() {
         final Role roleAdmin = roleService.findByName(Roles.ROLE_ADMIN);
+        final Role roleUser = roleService.findByName(Roles.ROLE_USER);
 
-        // createPrincipalIfNotExisting(SecurityConstants.ADMIN_USERNAME, SecurityConstants.ADMIN_PASS, Sets.<Role> newHashSet(roleAdmin));
         createPrincipalIfNotExisting(Um.ADMIN_EMAIL, Um.ADMIN_PASS, Sets.<Role> newHashSet(roleAdmin));
+        createPrincipalIfNotExisting(Um.USER_EMAIL, Um.USER_PASS, Sets.<Role> newHashSet(roleUser));
     }
 
     final void createPrincipalIfNotExisting(final String loginName, final String pass, final Set<Role> roles) {

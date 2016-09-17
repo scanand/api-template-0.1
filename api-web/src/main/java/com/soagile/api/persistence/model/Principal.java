@@ -54,13 +54,13 @@ public class Principal implements INameableEntity, INameableDto
     }
 
 
-    public Principal(final User user)
+    public Principal(final UserDto user)
     {
         super();
 
         this.name = user.getName();
         this.roles = user.getRoles();
-//        this.email = user.getEmail();
+        this.email = user.getEmail();
         this.password = user.getPassword();
     }
 

@@ -1,10 +1,14 @@
 package com.soagile.api.run.setup;
 
+import com.google.common.base.Preconditions;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContextInitializer;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.io.support.ResourcePropertySource;
+
+import java.io.IOException;
 
 /**
  * Created by soagile-pc on 10/08/2016.
@@ -13,14 +17,51 @@ public class MyApplicationContextInitializer implements ApplicationContextInitia
 
     //TODO: 10/08/2016 - implement the logger, check logger guidelines, "why Slf4j better" - Max time 30 mins
 
-    private final Logger LOG =  LoggerFactory.getLogger(getClass());
+    private final Logger logger =  LoggerFactory.getLogger(getClass());
 
+    private static final String ENV_TARGET = "envTarget";
+
+    public MyApplicationContextInitializer() {
+        super();
+    }
+
+    //
+
+    /**
+     * Sets the active profile.
+     */
+    @Override
     public void initialize(final ConfigurableApplicationContext applicationContext) {
         final ConfigurableEnvironment environment = applicationContext.getEnvironment();
-        final String property = environment.getProperty("spring.profiles.active");
+        String envTarget = null;
+        try {
+            envTarget = getEnvTarget(environment);
+            environment.getPropertySources().addFirst(new ResourcePropertySource("classpath:env-" + envTarget + ".properties"));
 
-        LOG.info("The active profiles are :{}" , property);
+            final String activeProfiles = environment.getProperty("spring.profiles.active");
+            environment.setActiveProfiles(activeProfiles.split(","));
+        } catch (final IOException ioEx) {
+            if (envTarget != null) {
+                logger.warn("Didn't find env-" + envTarget + ".properties in classpath so not loading it in the AppContextInitialized", ioEx);
+            }
+        }
+    }
 
-        environment.setActiveProfiles(property.split(","));
+    /**
+     * @param environment
+     * @return The env target variable.
+     */
+    private String getEnvTarget(final ConfigurableEnvironment environment) {
+        String target = environment.getProperty(ENV_TARGET);
+        if (target == null) {
+            logger.warn("Didn't find a value for {} in the current Environment!", ENV_TARGET);
+        }
+
+        if (target == null) {
+            logger.info("Didn't find a value for {} in the current Environment!, using the default `dev`", ENV_TARGET);
+            target = "dev";
+        }
+
+        return Preconditions.checkNotNull(target);
     }
 }

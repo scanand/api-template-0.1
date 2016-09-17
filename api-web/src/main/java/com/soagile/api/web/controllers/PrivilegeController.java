@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @Controller
-@RequestMapping(value = UmMappings.PRIVILEDGES)
+@RequestMapping(value = UmMappings.PRIVILEGES)
 public class PrivilegeController extends AbstractController<Privilege> implements ISortingController<Privilege> {
 
     @Autowired

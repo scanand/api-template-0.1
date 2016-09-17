@@ -3,11 +3,9 @@ package com.soagile.api.service.impl;
 import com.google.common.collect.Lists;
 import com.soagile.api.common.web.RestPreconditions;
 import com.soagile.api.persistence.model.Principal;
-import com.soagile.api.persistence.model.User;
 import com.soagile.api.service.IPrincipalService;
 import com.soagile.api.service.IUserService;
 import com.soagile.api.web.dto.UserDto;
-import com.soagile.api.web.util.PrincipalToUserFunction;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
@@ -17,6 +15,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 
 @Service
@@ -26,92 +25,95 @@ public class UserServiceImpl implements IUserService {
     @Autowired
     private IPrincipalService principalService;
 
-    /**
-     *
-     * @param id
-     * @return
-     */
-    @Override
-    @Transactional
-    public User findOne(long id) {
-        final Principal one = principalService.findOne(id);
-        if (one == null) {
-            return null;
-        }
-        return new User(one);
+    public UserServiceImpl() {
+        super();
     }
 
-    /**
-     * @return
-     */
+    // API
+
+    // find - one
+
     @Override
     @Transactional(readOnly = true)
-    public List<User> findAll() {
-
-        final List<Principal> principals = principalService.findAll();
-        final List<User> allUsers = Lists.transform(principals, new PrincipalToUserFunction());
-        return Lists.newArrayList(allUsers);
-    }
-
-
-    /**
-     * @param dto
-     * @return
-     */
-    @Override
-    public User create(final User dto) {
-        final Principal newPrincipal = new Principal(dto);
-        principalService.create(newPrincipal);
-        dto.setId(newPrincipal.getId());
-        return dto;
-    }
-
-    private final UserDto convert(final Principal principal) {
+    public UserDto findByName(final String name) {
+        final Principal principal = principalService.findByName(name);
         return new UserDto(principal);
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public UserDto findOne(final long id) {
+        final Principal principal = principalService.findOne(id);
+        if (principal == null) {
+            return null;
+        }
+        return new UserDto(principal);
+    }
+
+    // find - many
 
     @Override
-    public User findByName(final String name) {
-        final Principal principal = principalService.findByName(name);
-        return new User(principal);
+    @Transactional(readOnly = true)
+    public List<UserDto> findAll() {
+        final List<Principal> principals = principalService.findAll();
+        final List<UserDto> userDtos = principals.stream().map(this::convert).collect(Collectors.toList());
+        return Lists.newArrayList(userDtos);
     }
 
     @Override
-    public Page<User> findAllPaginatedAndSortedRaw(final int page, final int size, final String sortBy, final String sortOrder) {
-        final Page<Principal> principalsPaginatedAndSorted = principalService.findAllPaginatedAndSortedRaw(page, size, sortBy, sortOrder);
-        final List<User> usersPaginatedAndSorted = Lists.transform( principalsPaginatedAndSorted.getContent(), new PrincipalToUserFunction());
-
-
-        final PageRequest pageRequest = new PageRequest(page, size, constructSort(sortBy, sortOrder));
-
-        return new PageImpl<User>( usersPaginatedAndSorted, pageRequest,principalsPaginatedAndSorted.getTotalElements());
+    @Transactional(readOnly = true)
+    public List<UserDto> findAllSorted(final String sortBy, final String sortOrder) {
+        final List<Principal> principals = principalService.findAllSorted(sortBy, sortOrder);
+        final List<UserDto> userDtos = principals.stream().map(this::convert).collect(Collectors.toList());
+        return Lists.newArrayList(userDtos);
     }
 
     @Override
-    public List<User> findAllSorted(final String sortBy, final String sortOrder) {
-        final List<Principal> allSorted = principalService.findAllSorted(sortBy, sortOrder);
-        return Lists.transform(allSorted, new PrincipalToUserFunction());
-    }
-
-    @Override
-    public List<User> findAllPaginated(final int page, final int size) {
+    @Transactional(readOnly = true)
+    public List<UserDto> findAllPaginated(final int page, final int size) {
         final List<Principal> principals = principalService.findAllPaginated(page, size);
-        return  Lists.transform(principals, new PrincipalToUserFunction());
+        final List<UserDto> userDtos = principals.stream().map(this::convert).collect(Collectors.toList());
+        return Lists.newArrayList(userDtos);
     }
 
     @Override
-    public List<User> findAllPaginatedAndSorted(final int page, final int size, final String sortBy, final String sortOrder) {
+    @Transactional(readOnly = true)
+    public Page<UserDto> findAllPaginatedAndSortedRaw(final int page, final int size, final String sortBy, final String sortOrder) {
+        final Page<Principal> principals = principalService.findAllPaginatedAndSortedRaw(page, size, sortBy, sortOrder);
+        final List<UserDto> userDtos = principals.getContent().stream().map(this::convert).collect(Collectors.toList());
+        return new PageImpl<UserDto>(userDtos, new PageRequest(page, size, constructSort(sortBy, sortOrder)), principals.getTotalElements());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<UserDto> findAllPaginatedAndSorted(final int page, final int size, final String sortBy, final String sortOrder) {
         return findAllPaginatedAndSortedRaw(page, size, sortBy, sortOrder).getContent();
     }
 
+    // create
+
     @Override
-    public void update(final User resource) {
-        final Principal principal = RestPreconditions.checkNotNull(principalService.findOne(resource.getId()));
-        principal.setName(resource.getName());
-        principal.setRoles(resource.getRoles());
-        principalService.update(principal);
+    public UserDto create(final UserDto dto) {
+        final Principal newPrincipalEntity = new Principal(dto);
+        principalService.create(newPrincipalEntity);
+        dto.setId(newPrincipalEntity.getId());
+        return dto;
     }
+
+    // update
+
+    @Override
+    public void update(final UserDto dto) {
+        final Principal principalToUpdate = RestPreconditions.checkNotNull(principalService.findOne(dto.getId()));
+
+        principalToUpdate.setName(dto.getName());
+        principalToUpdate.setEmail(dto.getEmail());
+        principalToUpdate.setRoles(dto.getRoles());
+
+        principalService.update(principalToUpdate);
+    }
+
+    // delete
 
     @Override
     public void delete(final long id) {
@@ -123,12 +125,27 @@ public class UserServiceImpl implements IUserService {
         principalService.deleteAll();
     }
 
+    // count
+
     @Override
     public long count() {
         return principalService.count();
     }
 
-    final Sort constructSort(final String sortBy, final String sortOrder) {
+    // other
+
+    public UserDto getCurrentUser() {
+        final Principal principal = principalService.getCurrentPrincipal();
+        return new UserDto(principal);
+    }
+
+    // UTIL
+
+    private final UserDto convert(final Principal principal) {
+        return new UserDto(principal);
+    }
+
+    private final Sort constructSort(final String sortBy, final String sortOrder) {
         Sort sortInfo = null;
         if (sortBy != null) {
             sortInfo = new Sort(Sort.Direction.fromString(sortOrder), sortBy);

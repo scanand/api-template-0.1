@@ -1,10 +1,13 @@
 package com.soagile.api.run;
 
 import com.soagile.api.run.setup.MyApplicationContextInitializer;
+import com.soagile.api.web.configuration.ApiContextConfig;
+import com.soagile.api.web.configuration.ApiSecurityConfiguration;
 import com.soagile.api.web.configuration.WebappConfiguration;
 import com.soagile.api.web.configuration.WebappPersistenceJpaConfig;
-import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.security.SecurityAutoConfiguration;
+import org.springframework.boot.autoconfigure.web.ErrorMvcAutoConfiguration;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.context.embedded.ServletRegistrationBean;
 import org.springframework.boot.context.web.SpringBootServletInitializer;
@@ -18,14 +21,14 @@ import java.util.Map;
 /**
  * An opinionated WebApplicationInitializer to run a SpringApplication from a traditional WAR deployment.
  */
-@SpringBootApplication
-@Import(value = {MyApplicationContextInitializer.class, WebappPersistenceJpaConfig.class, WebappConfiguration.class})
-public class AtApp extends SpringBootServletInitializer {
+@SpringBootApplication (exclude = { SecurityAutoConfiguration.class, ErrorMvcAutoConfiguration.class})
+@Import(value = {ApiContextConfig.class, MyApplicationContextInitializer.class, WebappPersistenceJpaConfig.class, WebappConfiguration.class, ApiSecurityConfiguration.class})
+public class AtApp  {
 
-    @Bean
-    public DispatcherServlet dispatcherServlet() {
-        return new DispatcherServlet();
-    }
+//    @Bean
+//    public DispatcherServlet dispatcherServlet() {
+//        return new DispatcherServlet();
+//    }
 
     /**
      * Only for Spring-boot
@@ -36,18 +39,18 @@ public class AtApp extends SpringBootServletInitializer {
      *
      * @return
      */
-    @Bean
-    public ServletRegistrationBean dispatcherServletRegistration() {
-        final ServletRegistrationBean registration = new ServletRegistrationBean(dispatcherServlet(), "/api/*");
-
-        final Map<String, String> params = new HashMap<String, String>();
-        params.put("contextClass", "org.springframework.web.context.support.AnnotationConfigWebApplicationContext");
-        params.put("contextConfigLocation", "org.spring.sec2.spring");
-        params.put("dispatchOptionsRequest", "true");
-        registration.setInitParameters(params);
-        registration.setLoadOnStartup(1);
-        return registration;
-    }
+//    @Bean
+//    public ServletRegistrationBean dispatcherServletRegistration() {
+//        final ServletRegistrationBean registration = new ServletRegistrationBean(dispatcherServlet(), "/api/*");
+//
+//        final Map<String, String> params = new HashMap<String, String>();
+//        params.put("contextClass", "org.springframework.web.context.support.AnnotationConfigWebApplicationContext");
+//        params.put("contextConfigLocation", "org.spring.sec2.spring");
+//        params.put("dispatchOptionsRequest", "true");
+//        registration.setInitParameters(params);
+//        registration.setLoadOnStartup(1);
+//        return registration;
+//    }
 
 
     /**
@@ -57,10 +60,10 @@ public class AtApp extends SpringBootServletInitializer {
      * @param builder
      * @return
      */
-    @Override
-    protected SpringApplicationBuilder configure(final SpringApplicationBuilder builder) {
-        return builder.initializers(new MyApplicationContextInitializer()).sources(AtApp.class);
-    }
+//    @Override
+//    protected SpringApplicationBuilder configure(final SpringApplicationBuilder builder) {
+//        return builder.initializers(new MyApplicationContextInitializer()).sources(AtApp.class);
+//    }
 
 
     /***

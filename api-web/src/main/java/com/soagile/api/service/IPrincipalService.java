@@ -8,5 +8,7 @@ import com.soagile.api.persistence.model.Principal;
  */
 public interface IPrincipalService extends IService<Principal>{
 
+    Principal getCurrentPrincipal();
+
 
 }

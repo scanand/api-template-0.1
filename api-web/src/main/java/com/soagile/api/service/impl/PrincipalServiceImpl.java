@@ -1,6 +1,7 @@
 package com.soagile.api.service.impl;
 
 import com.soagile.api.common.persistence.service.AbstractService;
+import com.soagile.api.common.security.SpringSecurityUtil;
 import com.soagile.api.persistence.dao.IPrincipalJpaDao;
 import com.soagile.api.persistence.model.Principal;
 import com.soagile.api.service.IPrincipalService;
@@ -29,5 +30,12 @@ public class PrincipalServiceImpl extends AbstractService<Principal> implements 
 
     protected JpaSpecificationExecutor<Principal> getSpecificationExecutor() {
         return dao;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Principal getCurrentPrincipal() {
+        final String principalName = SpringSecurityUtil.getNameOfCurrentPrincipal();
+        return getDao().findByName(principalName);
     }
 }

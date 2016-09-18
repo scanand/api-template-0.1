@@ -32,7 +32,7 @@ public class ApiSecurityConfiguration extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
         http.
-                authorizeRequests().antMatchers("/api/users").authenticated().and().
+                authorizeRequests().anyRequest().authenticated().and().
                 httpBasic().and().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().
                 csrf().disable();
     }

@@ -28,7 +28,7 @@ public class PrivilegeServiceImpl extends AbstractService<Privilege> implements 
 
     // TODO: 16/08/2016 is return type just JPADao or pagingAndsortinRepository
     @Override
-    protected PagingAndSortingRepository<Privilege, Long> getDao() {
+    protected final IPrivilegeJpaDao getDao() {
         return dao;
     }
 

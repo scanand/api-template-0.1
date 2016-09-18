@@ -51,6 +51,7 @@ public class UserController extends AbstractController<UserDto> implements ISort
     }
 
     @Override
+    @Secured(Um.Privileges.CAN_ROLE_READ)
     public List<UserDto> findAllPaginatedAndSorted(int page, int size, String sortBy, String sortOrder) {
         return getService().findAllPaginatedAndSorted(page, size, sortBy, sortOrder);
     }
@@ -72,6 +73,7 @@ public class UserController extends AbstractController<UserDto> implements ISort
     @Override
     @RequestMapping(method = RequestMethod.GET)
     @ResponseBody
+    @Secured(Um.Privileges.CAN_USER_READ)
     public List<UserDto> findAll(HttpServletRequest request) {
         LOG.debug("findAll" +  "Start" );
         if (request.getParameterNames().hasMoreElements()) {
@@ -86,6 +88,7 @@ public class UserController extends AbstractController<UserDto> implements ISort
 
     @RequestMapping(method = RequestMethod.POST)
     @ResponseStatus(HttpStatus.CREATED)
+    @Secured(Um.Privileges.CAN_USER_WRITE)
     public void create(@RequestBody @Valid final UserDto resource) {
         createInternal(resource);
     }
